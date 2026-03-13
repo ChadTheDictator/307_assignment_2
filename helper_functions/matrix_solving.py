@@ -18,16 +18,16 @@ def get_pivot(
   '''
 
   # Defining scale vector
-  lst = list(map(lambda x: max(x, key=abs),matrix))
+  lst = [max(abs(x) for x in row) for row in matrix]
   pivot = []
 
   # Determining pivot row
   for i in range(len(matrix)):
     if i in pivoted:
-      pivot.append((1*10**-9))
+      pivot.append(float('-inf'))
     else:
       pivot.append((abs(matrix[i][index]))/(abs(lst[i])))
-  pivot_row = pivot.index(max(pivot,key=abs))
+  pivot_row = pivot.index(max(pivot))
   return(pivot_row)
 
 
@@ -48,11 +48,11 @@ def back_sub(
     returns result of the back substitution in order:
       [x1,x2,x3,...,xn]
   """
-
   if order == None:
     order = list(range(len(matrix)-1,-1,-1))
 
   var_locs = order[::-1]
+
   for i in order:
     cd_index = (len(order)-(order.index(i))-1) # Center Diagonal Index
 
@@ -110,11 +110,12 @@ def gauss_elim_p_piv(
 
         # if the row index isn't on main diagonal, and has not been pivoted already
         if row_index != pivot_index and row_index not in order_pivot:
-          
+
           scaler = matrix[row_index][column_index]/matrix[pivot_index][column_index]
-
-          matrix[row_index] = list(map(lambda x,y: x-(y*scaler),matrix[row_index],matrix[pivot_index]))
-
+          for i in range(len(matrix[row_index])):
+            matrix[row_index][i] = matrix[row_index][i] - (scaler*matrix[pivot_index][i])
+            if abs(matrix[row_index][i]) < (1*(10**-6)):
+              matrix[row_index][i] = 0
           outs[row_index] = outs[row_index]-(outs[pivot_index]*scaler)
           
         if column_index == columns-2 and row_index not in order_pivot:
@@ -122,13 +123,13 @@ def gauss_elim_p_piv(
 
   # Reverse Substitution
   reverse_order = order_pivot[::-1]
-  back_sub(matrix,outs,reverse_order)
-
+  outs = back_sub(matrix,outs,reverse_order)
   answer = {}
 
   for i in range(len(outs)):
-    answer[var[i]] = round(outs[i],6)
+    answer[var[i]] = (outs[i])
 
   # Uncomment below to print out pivot orders
   # print(f'Pivot Order: {order_pivot}')
   return(answer)
+
