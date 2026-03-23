@@ -50,10 +50,13 @@ print(f'integral = {simp38(n)}')
 
 approxes = []
 nlist = []
-
-for i in range(1, 9):
-    approxes+= [simp38(10**i)]
+print(f"n\t\t|\tApproximation value")
+for i in range(3, 120, 15):
+    approxes+= [simp38(i)]
     nlist += [i]
-plot_integrals(approxes, nlist)
+for i in range(1500, 300000, 3000):
+    approxes+= [simp38(i)]
+    nlist += [i]
 
-print(approxes)
+for i in range(len(approxes)):
+    print(f"{nlist[i]}\t\t|\t {round(approxes[i], 5)}")
