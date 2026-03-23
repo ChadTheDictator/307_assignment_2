@@ -1,6 +1,6 @@
 # Author Nick M.
 # transient analysis via 
-from numpy import log
+from math import log
 import matplotlib.pyplot as plt
 
 #function = integral( ln(r)/sqrt(r))dr from 0->1
@@ -10,11 +10,15 @@ import matplotlib.pyplot as plt
 
 # bounds of integration do not change, 1^2 = 1, 0^2 = 0
 
-a = 10**-12
+a = 10**-15
 b = 1 
 
 n = int(input("Number of sub-intervals(multiple of 3):"))
 h = (b-a)/n
+ 
+gweights = [0.56888888, 0.4786286704993,0.4786286704993,0.236926885056189,0.236926885056189]
+nodes = [0, -0.5384693101056831,0.5384693101056831,-0.9061798459386640,0.9061798459386640]
+
 
 
 def f(r):
@@ -38,30 +42,23 @@ def simp38(n):
         
     return area
 
-def plot_integrals(aprxs, nlist):
+def plot_integrals(approxes, nlist):
     plt.figure()
-    plt.plot(nlist, aprxs, marker='*')
-    plt.xlabel("n Value")
+    plt.plot(nlist, approxes, marker='*')
+    plt.xlabel("Value of i, n = 10^i")
     plt.ylabel("Approximation Value")
-    plt.title("Approximation Value vs n Value")
+    plt.title("Approximation Value vs Value of n")
     plt.show()
 
 approx = simp38(n)
-print(f'integral = {approx}')
+print(f'integral = {simp38(n)}')
 
-#justify b)
-
-
-aprxs = []
+approxes = []
 nlist = []
-n=0
-#C) Graphing every 
 
-for i in range(1,300,10):
-    n = 3*i
-    aprxs += [simp38(n)]
-    nlist += [n]
+for i in range(1, 9):
+    approxes+= [simp38(10**i)]
+    nlist += [i]
+plot_integrals(approxes, nlist)
 
-#print(aprxs)
-plot_integrals(aprxs, nlist)
-
+print(approxes)
