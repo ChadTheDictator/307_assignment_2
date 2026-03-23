@@ -16,11 +16,6 @@ b = 1
 n = int(input("Number of sub-intervals(multiple of 3):"))
 h = (b-a)/n
  
-gweights = [0.56888888, 0.4786286704993,0.4786286704993,0.236926885056189,0.236926885056189]
-nodes = [0, -0.5384693101056831,0.5384693101056831,-0.9061798459386640,0.9061798459386640]
-
-
-
 def f(r):
     height = 4*log(r) #using modified function
     return height
