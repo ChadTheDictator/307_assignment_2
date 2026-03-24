@@ -13,50 +13,49 @@ import matplotlib.pyplot as plt
 a = 10**-15
 b = 1 
 
-n = int(input("Number of sub-intervals(multiple of 3):"))
-h = (b-a)/n
+# Node/weight data for 5 pt quadrature
+nodes = [0, -0.538469, 0.538469, -0.906180, 0.906180]
+weights = [0.568889, 0.478629, 0.478629, 0.236927, 0.236927]
+
+    
  
 def f(r):
     height = 4*log(r) #using modified function
     return height
 
-def simp38(n):
+def gauss5pt(n):
+ 
+    area = 0 
     h = (b-a)/n
-    area = 0
 
-    for i in range(0, n, 3): # n/3 subdivision groupings:
-        x0 = a + i*h    #start at 1st point in grouping of 3, i*h being the grouping # 
-        x1 = x0 + h     #next pts based on the first of the interval
-        x2 = x0 + 2*h
-        x3 = x0 + 3*h
-        area+= f(x0) + 3*f(x1) + 3*f(x2) + 1*f(x3)
-    
+    for i in range(n): #for each subinterval
+        left_end = a +i*h
+        right_end = left_end+h # right boundary, a + width of subinterval
+        midpt = (left_end+right_end)/2 # finds location of middle point of subinterval
+        half = (right_end-left_end)/2  # halflength of subinterval
 
-    area*= 3*h/8 #Multiply by the 
 
-        
+        for j in range(5):      
+            x = midpt + half*nodes[j]
+            area +=weights[j]*f(x)*half
+
     return area
 
-def plot_integrals(approxes, nlist):
-    plt.figure()
-    plt.plot(nlist, approxes, marker='*')
-    plt.xlabel("Value of i, n = 10^i")
-    plt.ylabel("Approximation Value")
-    plt.title("Approximation Value vs Value of n")
-    plt.show()
 
-approx = simp38(n)
-print(f'integral = {simp38(n)}')
+# Main code
+
+n = int(input("Number of sub-intervals:"))
+approx = gauss5pt(n)
+print(f'integral = {gauss5pt(n)}')
 
 approxes = []
 nlist = []
+
 print(f"n\t\t|\tApproximation value")
-for i in range(3, 120, 15):
-    approxes+= [simp38(i)]
+for i in range(1,20):
+    approxes+= [gauss5pt(i)]
     nlist += [i]
-for i in range(1500, 300000, 3000):
-    approxes+= [simp38(i)]
-    nlist += [i]
+
 
 for i in range(len(approxes)):
     print(f"{nlist[i]}\t\t|\t {round(approxes[i], 5)}")
