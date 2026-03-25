@@ -56,6 +56,6 @@ for i in range(1,20):
     approxes+= [gauss5pt(i)]
     nlist += [i]
 
-
 for i in range(len(approxes)):
     print(f"{nlist[i]}\t\t|\t {round(approxes[i], 5)}")
+
