@@ -13,19 +13,26 @@ def read_csv(file):
             sh.append(float(SH))
     return sv, sh
 
-def S(x_value, x, h):
+def create_S(x_value, zlist, sv, sh, h):
     interval_num = 0
+    n = len(sv) - 1
+
     for i in range(n):
-        if x[i] <= x_value <= x[i+1]:
+        if sv[i] <= float(x_value) <= sv[i+1]:
             interval_num = i
             break
-    
-    hi = h[i]
 
-    #term_1 = 
-    return
+    i = interval_num
+    hi = h[i]    
+        
+    term_1 = zlist[i] * (sv[i+1] - x_value)**3 / (6 * hi)
+    term_2 = zlist[i+1] * (x_value - sv[i])**3 / (6 * hi)
+    term_3 = (sh[i] - zlist[i]*hi**2/6) * (sv[i+1] - x_value) / hi
+    term_4 = (sh[i+1] - zlist[i+1]*hi**2/6) * (x_value - sv[i]) / hi
+        
+    return (term_1 + term_2 + term_3 + term_4)
 
-def spline(file):
+def get_spline_matrix(file):
     sv, sh = read_csv(file)
     n = len(sv)-1
 
@@ -38,6 +45,7 @@ def spline(file):
     y = sh
     x = sv
     A = []
+
     for i in range(n):
         h += [(x[i+1] - x[i])]
     
@@ -61,27 +69,33 @@ def spline(file):
         # Upper diagonal
         if i < n-2:
             row[i+1] = h[i+1]
+        A+=[row]
 
-        A.append(row)
 
-       
-        v.append(6*(b[i+1] - b[i]))
+    return A, v, h 
+#------------Main Code----------
 
-    return A, v
-    #print(h,u,b,v,y,x)
-   # v+=[h[i-1]*z[i-1]+u[i]*z[i]+h[i]*z[i+1]]
+x_value = float(input("value of sv to estimate sh at:"))
 sv, sh = read_csv(file)
 n = len(sv)-1
     
-A,v = spline(file)
-#vars = []
-#for i in range(n):
-#    vars+=["z"]
+A,v,h = get_spline_matrix(file)
+#print(A)
+#print(v)
 
-z = gauss_elim_p_piv(A,v,vars)
+vars = []
+for i in range(n-1):
+    vars+=["z"+str(i+1)]
 
-print(z)
+#print(vars)
+zlist = []
+z, nums = gauss_elim_p_piv(A, vars, v) #via helper function for partial pivoting gaussian elim.
 
+for i in range(len(nums)):  #convert into list instead of dict.
+    zlist += [z.get(vars[i])]
+zlist =[0] + zlist + [0] 
 
-#print(sv)
-#print(sh)
+a = create_S(x_value, zlist, sv, sh, h)
+
+print("Spline value at", x_value, "=", a)
+
