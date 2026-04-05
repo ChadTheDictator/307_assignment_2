@@ -1,4 +1,6 @@
 import csv
+import matplotlib.pyplot as plt
+
 from helper_functions.matrix_solving import gauss_elim_p_piv
 
 file  = "SV&SH_data.csv"
@@ -73,6 +75,87 @@ def get_spline_matrix(file):
 
 
     return A, v, h 
+
+
+def print_spline_fxs(sv, sh, zlist, h):
+    n = len(sv)-1
+
+    print("\nCubic Spline Functions (Expanded Form):\n")
+    
+    a = []  # Coefficients ax3 +bx2 +cx +d
+    b = []
+    c = []
+    d = []
+
+    for i in range(n):
+        xi = sv[i]
+        xi1 = sv[i+1]
+        hi = h[i]
+
+        zi = zlist[i]
+        zi1 = zlist[i+1]
+
+        # Coefficients from standard spline form
+        A = zi/(6*hi)
+        B = zi1/(6*hi)
+        C = (sh[i] - zi * hi**2 / 6)/hi
+        D = (sh[i+1] - zi1 * hi**2 / 6)/hi
+
+        # (xi1 - x)^3 = -x^3 + 3xi1 x^2 - 3xi1^2 x + xi1^3
+        # (x - xi)^3 = x^3 - 3xi x^2 + 3xi^2 x - xi^3
+        
+        ai = -A + B
+        bi = 3*A*xi1 - 3*B*xi
+        ci = -3*A*(xi1**2) + 3*B*(xi**2) - C + D
+        di = A*(xi1**3) - B*(xi**3) + C*xi1 - D*xi
+
+        print(f"Interval [{xi}, {xi1}]:")
+        print(f"S_{i}(x) = ({ai:.4e})X^3 + ({bi:.4e})X^2 + ({ci:.4e})X + ({di:.4e})\n")
+        
+        a += [ai]   # Add to list for later use
+        b += [bi]
+        c += [ci]
+        d += [di]
+    return a, b, c, d
+
+def plot_splines(sv, sh, a, b, c, d):
+    x_plot = []
+    y_plot = []
+
+    n = len(sv) - 1
+
+    for j in range(n):
+        xi = sv[j]
+        xi1 = sv[j+1]
+
+        num_points = 100
+        step = (xi1 - xi) / num_points
+
+        x = xi
+
+        for k in range(num_points + 1):
+            y = a[j]*x**3 + b[j]*x**2 + c[j]*x + d[j]
+
+            x_plot.append(x)
+            y_plot.append(y)
+
+            x += step
+
+
+    # plot spline
+    plt.plot(x_plot, y_plot)
+
+    # plot original data
+    plt.scatter(sv, sh)
+
+    plt.xlabel("Specific Volume (sv)")
+    plt.ylabel("Specific Enthalpy (sh)")
+    plt.title("Cubic Spline Interpolation")
+    plt.grid()
+
+    plt.show()
+
+
 #------------Main Code----------
 
 x_value = float(input("value of sv to estimate sh at:"))
@@ -95,7 +178,14 @@ for i in range(len(nums)):  #convert into list instead of dict.
     zlist += [z.get(vars[i])]
 zlist =[0] + zlist + [0] 
 
-a = create_S(x_value, zlist, sv, sh, h)
 
-print("Spline value at", x_value, "=", a)
 
+
+givenpt = create_S(x_value, zlist, sv, sh, h)
+
+print("Spline value at", x_value, "=", givenpt)
+
+print("\n\nSPLINE FUNCTIONS")
+a, b, c, d = print_spline_fxs(sv, sh, zlist, h)
+
+plot_splines(sv, sh, a, b, c, d)
