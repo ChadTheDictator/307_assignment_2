@@ -132,4 +132,3 @@ def gauss_elim_p_piv(
   # Uncomment below to print out pivot orders
   # print(f'Pivot Order: {order_pivot}')
   return(answer,(reverse_order[::-1]))
-

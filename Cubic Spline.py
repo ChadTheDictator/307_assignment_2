@@ -35,6 +35,10 @@ def create_S(x_value, zlist, sv, sh, h):
     return (term_1 + term_2 + term_3 + term_4)
 
 def get_spline_matrix(file):
+    '''
+    gets system of equations to create spline equations
+    '''
+    
     sv, sh = read_csv(file)
     n = len(sv)-1
 
@@ -75,7 +79,6 @@ def get_spline_matrix(file):
 
 
     return A, v, h 
-
 
 def print_spline_fxs(sv, sh, zlist, h):
     n = len(sv)-1
@@ -141,16 +144,21 @@ def plot_splines(sv, sh, a, b, c, d):
 
             x += step
 
-
+    # Table for data
+    '''
+    print("SV\t|\tSH")
+    for i in range(len(x_plot)):
+        print(f"{round(x_plot[i], 3)}\t{round(y_plot[i], 5)}")
+    '''
     # plot spline
     plt.plot(x_plot, y_plot)
 
     # plot original data
     plt.scatter(sv, sh)
 
-    plt.xlabel("Specific Volume (sv)")
-    plt.ylabel("Specific Enthalpy (sh)")
-    plt.title("Cubic Spline Interpolation")
+    plt.xlabel("Specific Volume (m^3/kg)")
+    plt.ylabel("Specific Enthalpy (kJ/kg)")
+    plt.title("Specific Enthalpy vs. Specific Volume")
     plt.grid()
 
     plt.show()
@@ -178,9 +186,6 @@ for i in range(len(nums)):  #convert into list instead of dict.
     zlist += [z.get(vars[i])]
 zlist =[0] + zlist + [0] 
 
-
-
-
 givenpt = create_S(x_value, zlist, sv, sh, h)
 
 print("Spline value at", x_value, "=", givenpt)
@@ -189,3 +194,5 @@ print("\n\nSPLINE FUNCTIONS")
 a, b, c, d = print_spline_fxs(sv, sh, zlist, h)
 
 plot_splines(sv, sh, a, b, c, d)
+
+

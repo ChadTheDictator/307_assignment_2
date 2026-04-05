@@ -52,7 +52,7 @@ approxes = []
 nlist = []
 
 print(f"n\t\t|\tApproximation value")
-for i in range(1,20):
+for i in range(1,21):
     approxes+= [gauss5pt(i)]
     nlist += [i]
 
