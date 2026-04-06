@@ -1,5 +1,5 @@
 # Author Nick M.
-# transient analysis via 
+
 from math import log
 import matplotlib.pyplot as plt
 

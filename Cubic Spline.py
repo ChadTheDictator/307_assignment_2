@@ -331,5 +331,3 @@ a, b, c, d = print_spline_fxs(sv, sh, zlist, h)
 
 # Plot splines
 plot_splines(sv, sh, a, b, c, d)
-
-
